@@ -1,0 +1,10 @@
+<a href="{% url 'upload' %}">Upload new image</a>
+{% if latest_image_list %}
+<ul>
+    {% for img in latest_image_list %}
+    <li><a href="{% url 'detail' img.id %}">{{ img.title }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No images are available.</p>
+{% endif %}
