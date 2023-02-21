@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 
-from .forms import ImageForm
-from .models import Image
+from image_processing.forms import ImageForm
+from image_processing.models import Image
 
 
 def index(request):

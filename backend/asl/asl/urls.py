@@ -18,8 +18,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+# Wire up our API using automatic URL routing.
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # ex: /image_processing/
     path('image_processing/', include('image_processing.urls')),
 ]
 
