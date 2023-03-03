@@ -8,6 +8,8 @@ from django.conf import settings
 import cv2
 import os
 import numpy as np
+import base64
+from tensorflow import keras
 
 
 # ImageList class for creating a list of images
@@ -70,38 +72,29 @@ class ImageDetect(APIView):
     """
 
     def post(self, request, format=None):
-        serializer = ImageSerializer(data=request.data)
-        if serializer.is_valid():
-            print("TUT")
-            # Save the image to the database
-            # serializer.save()
-            # Get the latest image from the database
-            img_latest = Image.objects.latest('updated_at')
-            # Get the path to the image
-            path = os.path.join(settings.MEDIA_ROOT, str(img_latest.path))
-            print(img_latest.path.url)
-            # Read the image using opencv
-            img = cv2.imread(path)
-            # PROCESS THE IMAGE HERE
-            print(img.shape)
+        # Verify that the image is in the request
+        if 'img_base64' not in request.data:
+            return Response({'error': 'No image in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # print(str(img_latest.path).replace('/', '\\'))
-            # print(img_latest)
-            # print(settings.MEDIA_ROOT)
-            # Open the image using opencv
-            # print(request.FILES['path'])
-            # print(serializer)
-            # print(serializer.data['path'])
+        # Get the encoded image
+        img_str_base64 = request.data['img_base64']
+        # Decode the image
+        data = base64.urlsafe_b64decode(img_str_base64)
+        # Convert the image to numpy array
+        np_buff = np.frombuffer(data, dtype=np.uint8)
+        # Decode the image
+        img = cv2.imdecode(np_buff, cv2.IMREAD_COLOR)
+        classes = ['a', 'b', 'c', 'close', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'open', 'p',
+                    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        prediction = settings.MODEL_ASL.predict(np.array([img]), verbose=0)
+        letter = classes[np.argmax(prediction)]
+        confidence = np.max(prediction)
+        print(f'Letter: {letter}, Confidence: {confidence}')
 
-            # Using REQUEST
-            # data = request.FILES['path'].read()
-            # img = np.asarray(bytearray(data), dtype="uint8")
-            # img = cv2.imdecode(img, cv2.IMREAD_COLOR)
-    
-            payload = {
-                'image': img,
-                'asl_letter': 'A',
-            }
-            print("TUT")
-            return Response(payload, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        payload = {
+            'asl_letter': letter,
+            'confidence': confidence
+        }
+
+        return Response(payload, status=status.HTTP_200_OK)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
