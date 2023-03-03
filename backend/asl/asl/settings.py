@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+from tensorflow import keras
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +26,7 @@ SECRET_KEY = 'django-insecure-ewq(f*qp1ooh3$@5hgwk^jjb&*mv3p-q60_a)1gps9-4^)rj)g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# python manage.py runserver 0.0.0.0:8000
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -36,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third party apps
-    'django_extensions',
     'django_filters',
     'rest_framework',
     'rest_framework_json_api',
@@ -122,6 +124,10 @@ STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Base url to serve media files
 MEDIA_URL = '/media/'
+
+# Path where models are stored
+MODELS_ROOT = os.path.join(BASE_DIR, 'models')
+MODEL_ASL = keras.models.load_model(os.path.join(MODELS_ROOT, 'asl_model'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
