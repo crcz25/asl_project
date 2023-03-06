@@ -130,3 +130,6 @@ dmypy.json
 
 # Pycharm .idea folder
 .idea/*
+
+# Ignore dataset
+model/american_sign_language/*
