@@ -133,3 +133,6 @@ dmypy.json
 
 # Ignore dataset
 model/american_sign_language/*
+
+# Ignore .vscode
+.vscode/
