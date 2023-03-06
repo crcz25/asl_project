@@ -103,6 +103,12 @@ def send_frames(queue):
                 confidence = np.max(prediction)
                 # Print the class name and confidence
                 print(f'Letter: {class_name}, Confidence: {confidence:.2f}, Elapsed Time: {elapsed_time:.2f} seconds')
+                # Add the class name and confidence to the frame
+                cv2.putText(frame, f'{class_name} {confidence:.2f}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                # Show the frame
+                cv2.imshow('OAK-D Response Hand', frame)
+                if cv2.waitKey(1) == ord('q'):
+                    cv2.destroyAllWindows()
                 # Append the results to the csv file
                 with open('results_local_prediction.csv', 'a') as f:
                     # Add the class name, confidence, and elapsed time to the csv file

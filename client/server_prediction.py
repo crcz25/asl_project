@@ -111,6 +111,10 @@ def send_frames(queue):
                 confidence = data['confidence']
                 # Print the result
                 print(f'Letter: {class_name}, Confidence: {confidence:.2f}, Elapsed Time: {elapsed_time:.2f} seconds')
+                # Add the class name and confidence to the frame
+                cv2.putText(frame, f'{class_name} {confidence:.2f}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                # Show the frame
+                cv2.imshow('OAK-D Response Hand', frame)
                 # Append the results to the csv file
                 with open('results_server_prediction.csv', 'a') as f:
                     # Add the class name, confidence, and elapsed time to the csv file
