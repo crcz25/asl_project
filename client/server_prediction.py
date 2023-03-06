@@ -44,18 +44,12 @@ def process_frames(queue):
     cam_rgb_xout.setStreamName('rgb')
     cam_rgb.preview.link(cam_rgb_xout.input)
 
-    # Create the Oak-D device and start the pipeline
-    # device = depthai.Device(pipeline)
-    # device.startPipeline()
-
     with depthai.Device(pipeline) as device:
         q = device.getOutputQueue(name='rgb', maxSize=4, blocking=False)
         # Process frames indefinitely
         while True:
             # Get the next available frame
-            # in_rgb = device.getOutputQueue('rgb').get()
             in_rgb = q.tryGet()
-
             if in_rgb is not None:
                 # Convert the frame to a numpy array
                 frame_og = in_rgb.getCvFrame()
@@ -66,8 +60,6 @@ def process_frames(queue):
                 # Crop the hand from the image
                 frame_hand = crop_hand(frame)
                 if frame_hand is not None and frame_hand.shape[0] > 0 and frame_hand.shape[1] > 0:
-                    # Resize the frame
-                    # frame_hand = cv2.resize(frame_hand, (150, 150))
                     # Put the frame into the queue
                     queue.put(frame_hand)
                     # Show the frame
@@ -76,6 +68,9 @@ def process_frames(queue):
                         cv2.destroyAllWindows()
                 else:
                     queue.put(None)
+                cv2.imshow('OAK-D', frame_og)
+                if cv2.waitKey(1) == ord('q'):
+                    cv2.destroyAllWindows()
 
 
 def send_frames(queue):
@@ -109,9 +104,18 @@ def send_frames(queue):
                 response = requests.post(url, data=files)
                 end_time = time.time()
                 elapsed_time = end_time - start_time
-                print(response)
+                # Get the data from the response
+                data = response.json().get('data')
+                # Get the class name and confidence
+                class_name = data['asl_letter']
+                confidence = data['confidence']
                 # Print the result
-                print(f"Elapsed time: {elapsed_time}, Result: {response.text}")
+                print(f'Letter: {class_name}, Confidence: {confidence:.2f}, Elapsed Time: {elapsed_time:.2f} seconds')
+                # Append the results to the csv file
+                with open('results_server_prediction.csv', 'a') as f:
+                    # Add the class name, confidence, and elapsed time to the csv file
+                    f.write(f'{class_name},{confidence},{elapsed_time}\n')
+
             except Exception as e:
                 print(e)
 

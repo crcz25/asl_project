@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import depthai as dai
 import signal
+import pandas as pd
 import time
 import mediapipe as mp
 from tensorflow import keras
@@ -15,7 +16,7 @@ from multiprocessing import Process, Queue
 reconstructed_model = keras.models.load_model('../model/asl_model')
 classes = ['a', 'b', 'c', 'close', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'open', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 mpHands = mp.solutions.hands
-hands = mpHands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.25)
+hands = mpHands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.5)
 
 # Define a function to crop the hand from the image
 def crop_hand(image):
@@ -88,7 +89,7 @@ def send_frames(queue):
         if frame is not None and frame_count % 15 == 0:
             frame_count = 0
             # Show the frame
-            if frame is not None and frame.shape[0] > 0 and frame.shape[1] > 0:
+            if frame.shape[0] > 0 and frame.shape[1] > 0:
                 # Resize the frame
                 frame = cv2.resize(frame, (150, 150))
                 # Predict the class of the frame
@@ -102,6 +103,10 @@ def send_frames(queue):
                 confidence = np.max(prediction)
                 # Print the class name and confidence
                 print(f'Letter: {class_name}, Confidence: {confidence:.2f}, Elapsed Time: {elapsed_time:.2f} seconds')
+                # Append the results to the csv file
+                with open('results_local_prediction.csv', 'a') as f:
+                    # Add the class name, confidence, and elapsed time to the csv file
+                    f.write(f'{class_name},{confidence},{elapsed_time}\n')
         # Increment the frame count
         frame_count += 1
 
