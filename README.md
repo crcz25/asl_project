@@ -24,6 +24,11 @@ Develop a CNN to classify hand gestures into the 26 letters of the American Sign
 - `model` - Contains the Jupiter Notebook used to train the model. It will generate the directory `asl_model` which contains the model and the weights. You can find the model and the weights in the directory `backend/models/asl_model`.
     - `american_sign_language` - Contains the dataset used to train the model. It was obtanied from [here](https://www.kaggle.com/datasets/ayuraj/american-sign-language-dataset).
 
+## Installation
+- To install the API server, navigate to the `backend` directory and run the following command:
+    - `pip install -r requirements.txt`
+    - **Note:** You may need to update the version of `tensorflow` to train the model to >= 2.11.0.
+
 ## Running the Project
 - To run the API server, navigate to the `backend` directory and run the following commands:
     - `python manage.py makemigrations`
@@ -33,6 +38,12 @@ Develop a CNN to classify hand gestures into the 26 letters of the American Sign
     - `python local_prediction.py`
 - To run the server prediction application, navigate to the `client` directory and run the following commands:
     - `python server_prediction.py`
+
+## Results
+- Sreenshots of the local prediction application:
+    - ![Local Prediction](./images/prediction.png)
+- Sreenshots of the server prediction application:
+    - ![Server Prediction](./images/prediction_2.png)
 
 ## References
 - [Dataset](https://www.kaggle.com/datasets/ayuraj/american-sign-language-dataset)
