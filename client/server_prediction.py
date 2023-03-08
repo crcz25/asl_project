@@ -10,7 +10,7 @@ from multiprocessing import Process, Queue
 mpHands = mp.solutions.hands
 hands = mpHands.Hands(static_image_mode=False,
                     max_num_hands=1,
-                    min_detection_confidence=0.25)
+                    min_detection_confidence=0.5)
 
 # Define a function to crop the hand from the image
 def crop_hand(image):
@@ -63,11 +63,11 @@ def process_frames(queue):
                     # Put the frame into the queue
                     queue.put(frame_hand)
                     # Show the frame
-                    cv2.imshow('OAK-D Hand', frame_hand)
-                    if cv2.waitKey(1) == ord('q'):
-                        cv2.destroyAllWindows()
-                else:
-                    queue.put(None)
+                    # cv2.imshow('OAK-D Hand', frame_hand)
+                    # if cv2.waitKey(1) == ord('q'):
+                    #     cv2.destroyAllWindows()
+                # else:
+                #     queue.put(None)
                 cv2.imshow('OAK-D', frame_og)
                 if cv2.waitKey(1) == ord('q'):
                     cv2.destroyAllWindows()
@@ -116,9 +116,9 @@ def send_frames(queue):
                 # Show the frame
                 cv2.imshow('OAK-D Response Hand', frame)
                 # Append the results to the csv file
-                with open('results_server_prediction.csv', 'a') as f:
+                # with open('results_server_prediction.csv', 'a') as f:
                     # Add the class name, confidence, and elapsed time to the csv file
-                    f.write(f'{class_name},{confidence},{elapsed_time}\n')
+                    # f.write(f'{class_name},{confidence},{elapsed_time}\n')
 
             except Exception as e:
                 print(e)
