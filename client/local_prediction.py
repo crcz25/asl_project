@@ -93,7 +93,7 @@ def send_frames(queue):
     while True:
         # Get the next available frame from the queue
         frame = queue.get()
-        # Send the frame to the server every 15th frame
+        # Only process every 15th frame
         if frame is not None and frame_count % 15 == 0:
             frame_count = 0
             # Show the frame
