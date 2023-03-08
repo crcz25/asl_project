@@ -66,12 +66,20 @@ def process_frames(queue):
                 # Crop the hand from the image
                 frame_hand = crop_hand(frame)
                 if frame_hand is not None and frame_hand.shape[0] > 0 and frame_hand.shape[1] > 0:
+                    # Generate a mask using outsu thresholding
+                    gray = cv2.cvtColor(frame_hand, cv2.COLOR_BGR2GRAY)
+                    # Apply a Gaussian blur to the frame
+                    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+                    # Apply a threshold to the frame to get the mask
+                    ret, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+                    # Apply the mask to the frame
+                    frame_hand = cv2.bitwise_and(frame_hand, frame_hand, mask=mask)
                     # Put the frame into the queue
                     queue.put(frame_hand)
                     # Show the frame
-                    cv2.imshow('OAK-D Hand', frame_hand)
-                    if cv2.waitKey(1) == ord('q'):
-                        cv2.destroyAllWindows()
+                    # cv2.imshow('OAK-D Hand', frame_hand)
+                    # if cv2.waitKey(1) == ord('q'):
+                    #     cv2.destroyAllWindows()
                 else:
                     queue.put(None)
                 cv2.imshow('OAK-D', frame_og)
@@ -110,9 +118,9 @@ def send_frames(queue):
                 if cv2.waitKey(1) == ord('q'):
                     cv2.destroyAllWindows()
                 # Append the results to the csv file
-                with open('results_local_prediction.csv', 'a') as f:
+                # with open('results_local_prediction.csv', 'a') as f:
                     # Add the class name, confidence, and elapsed time to the csv file
-                    f.write(f'{class_name},{confidence},{elapsed_time}\n')
+                    # f.write(f'{class_name},{confidence},{elapsed_time}\n')
         # Increment the frame count
         frame_count += 1
 
